@@ -1,34 +1,33 @@
-PySpark Questions:
-======================
+𝑷𝒚𝑺𝒑𝒂𝒓𝒌 𝑸𝒖𝒆𝒔𝒕𝒊𝒐𝒏𝒔:
 ------------------------------------------------------------------------------------------
-1. Filter the DataFrame where age is greater than 28. 
+ 1. 𝐅𝐢𝐥𝐭𝐞𝐫 𝐭𝐡𝐞 𝐃𝐚𝐭𝐚𝐅𝐫𝐚𝐦𝐞 𝐰𝐡𝐞𝐫𝐞 𝐚𝐠𝐞 𝐢𝐬 𝐠𝐫𝐞𝐚𝐭𝐞𝐫 𝐭𝐡𝐚𝐧 28. 
 ------------------------------------------------------------------------------------------
 data = [(1, "John", 30), (2, "Jane", 25), (3, "Mike", 35)]
 columns = ["id", "name", "age"]
 df = spark.createDataFrame(data, columns)
 
-Solution:
+𝐒𝐨𝐥𝐮𝐭𝐢𝐨𝐧:
 df.filter(col("age")>28).show()
 
 ------------------------------------------------------------------------------------------
-2. Identify duplicate records based on the name column.
+2. 𝐈𝐝𝐞𝐧𝐭𝐢𝐟𝐲 𝐝𝐮𝐩𝐥𝐢𝐜𝐚𝐭𝐞 𝐫𝐞𝐜𝐨𝐫𝐝𝐬 𝐛𝐚𝐬𝐞𝐝 𝐨𝐧 𝐭𝐡𝐞 𝐧𝐚𝐦𝐞 𝐜𝐨𝐥𝐮𝐦𝐧.
 ------------------------------------------------------------------------------------------
 Sample Data: 
 data = [(1, "Alice"), (2, "Bob"), (3, "Alice"), (4, "David"), (2, "Bob")]
 columns = ["id", "name"]
 df = spark.createDataFrame(data, columns)
 
-Solution:
+𝐒𝐨𝐥𝐮𝐭𝐢𝐨𝐧:
 window_spec = Window.partitionBy("name").orderBy("id")
 df.withColumn("Row Number",row_number()\
 .over(window_spec)).filter(col("Row Number")>1)\
 .select("id","name").show()
 
 ------------------------------------------------------------------------------------------
-3. Remove duplicates from the above DataFrame while keeping the first occurrence.
+3. 𝐑𝐞𝐦𝐨𝐯𝐞 𝐝𝐮𝐩𝐥𝐢𝐜𝐚𝐭𝐞𝐬 𝐟𝐫𝐨𝐦 𝐭𝐡𝐞 𝐚𝐛𝐨𝐯𝐞 𝐃𝐚𝐭𝐚𝐅𝐫𝐚𝐦𝐞 𝐰𝐡𝐢𝐥𝐞 𝐤𝐞𝐞𝐩𝐢𝐧𝐠 𝐭𝐡𝐞 𝐟𝐢𝐫𝐬𝐭 𝐨𝐜𝐜𝐮𝐫𝐫𝐞𝐧𝐜𝐞.
 ------------------------------------------------------------------------------------------
-Solution:
-- Approach:1
+𝐒𝐨𝐥𝐮𝐭𝐢𝐨𝐧:
+
 window_spec = Window.partitionBy("name").orderBy("id")
 df.withColumn("Row Number",row_number().over(window_spec)).filter(col("Row Number")==1).select("id","name").show()
 
@@ -37,47 +36,47 @@ df_no_duplicates = df.dropDuplicates(["name"])
 df_no_duplicates.show()
 
 ------------------------------------------------------------------------------------------
-4. Write a PySpark query to get the second highest salary.
+4. 𝐖𝐫𝐢𝐭𝐞 𝐚 𝐏𝐲𝐒𝐩𝐚𝐫𝐤 𝐪𝐮𝐞𝐫𝐲 𝐭𝐨 𝐠𝐞𝐭 𝐭𝐡𝐞 𝐬𝐞𝐜𝐨𝐧𝐝 𝐡𝐢𝐠𝐡𝐞𝐬𝐭 𝐬𝐚𝐥𝐚𝐫𝐲.
 ------------------------------------------------------------------------------------------
 data = [("John", 5000), ("Jane", 7000), ("Mike", 6000), ("Alice", 8000)]
 columns = ["name", "salary"]
 df = spark.createDataFrame(data, columns)
 
-Solution:
+𝐒𝐨𝐥𝐮𝐭𝐢𝐨𝐧:
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 window_spec = Window.orderBy(col("salary").desc())
 df.withColumn("Dense Rank",dense_rank().over(window_spec)).filter(col("Dense Rank")==2).drop(col("Dense Rank")).show()
 ------------------------------------------------------------------------------------------
-5.Write a PySpark query to get the highest-paid employee in each department.
+5.𝐖𝐫𝐢𝐭𝐞 𝐚 𝐏𝐲𝐒𝐩𝐚𝐫𝐤 𝐪𝐮𝐞𝐫𝐲 𝐭𝐨 𝐠𝐞𝐭 𝐭𝐡𝐞 𝐡𝐢𝐠𝐡𝐞𝐬𝐭-𝐩𝐚𝐢𝐝 𝐞𝐦𝐩𝐥𝐨𝐲𝐞𝐞 𝐢𝐧 𝐞𝐚𝐜𝐡 𝐝𝐞𝐩𝐚𝐫𝐭𝐦𝐞𝐧𝐭.
 ------------------------------------------------------------------------------------------
 data = [("John", "HR", 5000), ("Jane", "IT", 7000), ("Mike", "HR", 6000), ("Alice", "IT", 8000)]
 columns = ["name", "dept", "salary"]
 df = spark.createDataFrame(data, columns)
 
-Solution:
+𝐒𝐨𝐥𝐮𝐭𝐢𝐨𝐧:
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 df.groupBy("dept").agg(max("salary").alias("Highest_paid")).show()
 
 ------------------------------------------------------------------------------------------
-6. Explode the skills column to have one skill per row.
+6. 𝐄𝐱𝐩𝐥𝐨𝐝𝐞 𝐭𝐡𝐞 𝐬𝐤𝐢𝐥𝐥𝐬 𝐜𝐨𝐥𝐮𝐦𝐧 𝐭𝐨 𝐡𝐚𝐯𝐞 𝐨𝐧𝐞 𝐬𝐤𝐢𝐥𝐥 𝐩𝐞𝐫 𝐫𝐨𝐰.
 ------------------------------------------------------------------------------------------
 data = [("John", ["Python", "Java"]), ("Jane", ["Scala", "Spark"])]
 columns = ["name", "skills"]
 df = spark.createDataFrame(data, columns)
 
-Solution:
+𝐒𝐨𝐥𝐮𝐭𝐢𝐨𝐧:
 df_exploded = df.withColumn("skill", explode("skills")).drop("skills")
 df_exploded.show()
 ------------------------------------------------------------------------------------------
-7. Convert department names into columns with total salary as values.
+7. 𝐂𝐨𝐧𝐯𝐞𝐫𝐭 𝐝𝐞𝐩𝐚𝐫𝐭𝐦𝐞𝐧𝐭 𝐧𝐚𝐦𝐞𝐬 𝐢𝐧𝐭𝐨 𝐜𝐨𝐥𝐮𝐦𝐧𝐬 𝐰𝐢𝐭𝐡 𝐭𝐨𝐭𝐚𝐥 𝐬𝐚𝐥𝐚𝐫𝐲 𝐚𝐬 𝐯𝐚𝐥𝐮𝐞𝐬.
 ------------------------------------------------------------------------------------------
 data = [("John", "HR", 5000), ("Jane", "IT", 7000), ("Mike", "HR", 6000)]
 columns = ["name", "dept", "salary"]
 df = spark.createDataFrame(data, columns)
 
-Solution:
+𝐒𝐨𝐥𝐮𝐭𝐢𝐨𝐧:
 pivot_df = df.groupBy().pivot("dept").agg(sum("salary"))
 pivot_df.show()
 
