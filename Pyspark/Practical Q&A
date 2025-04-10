@@ -68,7 +68,8 @@ columns = ["name", "skills"]
 df = spark.createDataFrame(data, columns)
 
 Solution:
-
+df_exploded = df.withColumn("skill", explode("skills")).drop("skills")
+df_exploded.show()
 ------------------------------------------------------------------------------------------
 7. Convert department names into columns with total salary as values.
 ------------------------------------------------------------------------------------------
@@ -77,5 +78,6 @@ columns = ["name", "dept", "salary"]
 df = spark.createDataFrame(data, columns)
 
 Solution:
-
+pivot_df = df.groupBy().pivot("dept").agg(sum("salary"))
+pivot_df.show()
 
